@@ -36,7 +36,7 @@ int main() {
 			for (int j = 0; j < 3; j++) { 
 				pushed = elev_get_button_signal(j, i);
 				if (pushed) {
-					addRequest(req, reqLen, i, static_cast<elev_get_button_signal>(j))
+					addRequest(req, reqLen, i, (elev_get_button_signal) j)
 				}
 			}
 		}
