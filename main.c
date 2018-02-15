@@ -14,10 +14,11 @@ int main() {
 
     elev_set_motor_direction(DIRN_UP);
 
-	int reqLen(10);
-	struct Requests req[reqLen];
-	int lastFloor;
-	
+    int reqLen(10);
+    struct Requests reqArr[reqLen];
+    int lastFloor, checkFloor, currentDir;
+    bool serviceFloor; //Wether or not elevator should stop and service newly arrived floor
+    
     while (1) {
         // Change direction when we reach top/bottom floor
         if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
@@ -25,21 +26,27 @@ int main() {
         } else if (elev_get_floor_sensor_signal() == 0) {
             elev_set_motor_direction(DIRN_UP);
         }
-		
-		lastFloor = elev_get_floor_sensor_signal();
-		
-		// Get button push signal
-		for (int i = 1; i < 5; i++) {
-			int pushed(0);
-			
-			//j=0: button up, j=1: button down, j=2: button command
-			for (int j = 0; j < 3; j++) { 
-				pushed = elev_get_button_signal(j, i);
-				if (pushed) {
-					addRequest(req, reqLen, i, (elev_get_button_signal) j)
-				}
-			}
-		}
+        
+        checkFloor = elev_get_floor_sensor_signal();
+
+        //Service newly arrived floor if valid request in queue
+        if (checkFloor != lastFloor) {
+            serviceFloor = checkIfRequest(reqArr, reqLen, newFloor, currentDir);
+            lastFloor = checkFloor;
+        }
+        
+        // Get button push signal
+        for (int i = 1; i < 5; i++) {
+            int pushed(0);
+            
+            //j=0: button up, j=1: button down, j=2: button command
+            for (int j = 0; j < 3; j++) { 
+                pushed = elev_get_button_signal(j, i);
+                if (pushed) {
+                    addRequest(reqArr, reqLen, i, (elev_get_button_signal) j)
+                }
+            }
+        }
 
         // Stop elevator and exit program if the stop button is pressed
         if (elev_get_stop_signal()) {
