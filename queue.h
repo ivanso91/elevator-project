@@ -15,7 +15,7 @@ struct Requests{
 };
 
 //takes current floor and removes all requests at that floor
-void remRequest(Requests req[], int floor);
+void remRequest(Requests reqArr[], int arrLength int currentFloor);
 
 //adds a request to the end of requests array
-void addRequest(Requests reqArr[], int reqFloor, bool reqDir);
+void addRequest(Requests reqArr[],int arrLength, int reqFloor, elev_button_type_t reqButton);

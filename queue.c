@@ -9,10 +9,12 @@ void remRequest(Requests reqArr[], int arrLength int currentFloor){
 	}
 }
 
-void addRequest(Requests reqArr[], int reqFloor, bool reqDir) {
+void addRequest(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
 	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].floor == reqFloor) {
+		if (!reqArr[i].isReq) {
 			reqArr[i].isReq = 1;
+			reqArr[i].button = reqButton;
+			reqArr[i].floor = reqFloor;
 		}
 	}
 }

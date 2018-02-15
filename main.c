@@ -14,7 +14,8 @@ int main() {
 
     elev_set_motor_direction(DIRN_UP);
 
-	struct Requests req[10];
+	int reqLen(10);
+	struct Requests req[reqLen];
 	int lastFloor;
 	
     while (1) {
@@ -31,10 +32,11 @@ int main() {
 		for (int i = 1; i < 5; i++) {
 			int pushed(0);
 			
-			for (int j = 0; j < 3; j++) {
+			//j=0: button up, j=1: button down, j=2: button command
+			for (int j = 0; j < 3; j++) { 
 				pushed = elev_get_button_signal(j, i);
 				if (pushed) {
-					addRequest()
+					addRequest(req, reqLen, i, static_cast<elev_get_button_signal>(j))
 				}
 			}
 		}
