@@ -7,4 +7,11 @@
 
 // Return new direction based on current direction and remaining requests in queue
 // currentDirection must be passed as 0 for down or 1 for up
-short determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, short currentDir);
+elev_motor_direction_t determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, 
+		elev_motor_direction_t currentDir);
+
+// Timer that pauses program for given seconds
+void timer(int seconds);
+
+//Stops motor (open doors) for 3 sec at newly arrived floor and deletes all request at that floor
+void handleFloorService(int floor);

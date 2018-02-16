@@ -38,6 +38,11 @@ int main() {
         if (checkFloor != lastFloor) {
             serviceFloor = checkIfRequest(reqArr, reqLen, newFloor, currentDir);
             lastFloor = checkFloor;
+            elev_set_floor_indicator(checkFloor);
+
+            if (serviceFloor) {
+                handleFloorService(checkFloor);
+            }
         }
         
         // Get button push signal

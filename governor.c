@@ -1,5 +1,7 @@
 #include "stdio.h"
 #include "queue.h"
+#include "elev.h"
+#include "time.h"
 
 // CONDITIONS:
 // - Controller iterates through request array for every loop
@@ -14,9 +16,9 @@
 // elevator has turned.
 
 // Return new direction based on current direction and remaining requests in queue
-// currentDirection must be passed as -1 for down, 0 for still or 1 for up
-short determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, short currentDir) {
-	short newDir = currentDir; // Keeps elevator in current direction by default
+// currentDirection must be passed as DIRN_DOWN, DIRN_UP or DIRN_STOP
+elev_motor_direction_t determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, elev_motor_direction_t currentDir) {
+	elev_motor_direction_t newDir = currentDir; // Keeps elevator in current direction by default
 	int reqSum = 0; // reqSum > 0 if there are any requests in queue
 	bool isReqInDir = 0; // True if there is a request in elevator's current direction
 
@@ -24,17 +26,37 @@ short determineDirection(struct Requests reqArr[], int arrLength, short currentF
 		reqSum += arrLength[i].isReq;
 
 		if (reqArr[i].isReq) {
-			short diff;
+			elev_motor_direction_t diff;
 			diff = reqArr[i].floor - currentFloor;
-			if (diff > 0 && current = 1) {
+			if (diff > 0 && currentDir = DIRN_UP) {
 				isReqInDir = 1;
-			} elseif (diff < 0 && current = 0) isReqInDir = 1;
+			} elseif (diff < 0 && currentDir = DIRN_DOWN) isReqInDir = 1;
 		}
 	}
 
 	if (!isReqInDir) {
 		newDir = -currentDir; // Switch elevator direction direction
-	} elseif (reqSum == 0) newDir = 0; // No requests -> stop elevator
+	} elseif (reqSum == 0) newDir = DIRN_STOP; // No requests -> stop elevator
 
 	return newDir;
+}
+
+void timer(int endTime) {
+	time_t initial = time(NULL), diff;
+    
+    do {
+        diff = (time(NULL) - initial);
+        
+    } while (diff < endTime);
+}
+
+void serviceFloor(int floor) {
+	elev_motor_direction_t newDirection;
+
+	elev_set_motor_direction(DIRN_STOP);
+	timer(3);
+
+	newDirection = determineDirection(struct Requests reqArr[], 
+			int arrLength, short currentFloor, elev_motor_direction_t currentDir);
+	elev_set_motor_direction(newDirection);
 }
