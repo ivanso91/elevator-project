@@ -1,5 +1,6 @@
 #include "elev.h"
 #include "queue.h"
+#include "governor.h"
 #include <stdio.h>
 
 typedef short bool;
@@ -18,9 +19,9 @@ int main() {
 
     elev_set_motor_direction(DIRN_UP);
 
-    int reqLen(10);
+    int reqLen( = 10;
     struct Requests reqArr[reqLen];
-    int lastFloor, checkFloor, currentDir;
+    short lastFloor, checkFloor, currentDir;
     bool serviceFloor; //Wether or not elevator should stop and service newly arrived floor
     
     while (1) {

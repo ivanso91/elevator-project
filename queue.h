@@ -1,12 +1,4 @@
 #include "stdio.h"
-#include "elev.h"
-
-//CONDITIONS:
-// - Controller iterates through request array for every loop
-// - Elevator shall service all requests in the direction the 
-//   elevator is going before changing direction
-// - At stand-still elevator will start going and service at 
-//   first request that appears
 
 struct Requests{
 	bool isReq;
@@ -14,11 +6,11 @@ struct Requests{
 	int floor;
 }; 
 
-// Takes current floor and removes all requests at that floor
-void remRequest(struct Requests reqArr[], int arrLength int currentFloor);
-
 // Defragment array. Gather all requests to fron of array (closing holes in queue)
 void defragmentArr(struct Requests reqArr[], int arrLength);
+
+// Takes current floor and removes all requests at that floor
+void remRequest(struct Requests reqArr[], int arrLength int currentFloor);
 
 // Adds a request to the end of requests array
 void addRequest(struct Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton);

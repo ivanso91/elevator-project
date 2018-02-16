@@ -1,13 +1,6 @@
 #include "stdio.h"
 #include "queue.h"
 
-void remRequest(struct Requests reqArr[], int arrLength int currentFloor){
-	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].floor == currentFloor) {
-			reqArr[i].isReq = 0;
-		}
-	}
-}
 
 void defragmentArr(struct Requests reqArr[], int arrLength) {
 	int c = 0;
@@ -19,6 +12,15 @@ void defragmentArr(struct Requests reqArr[], int arrLength) {
 			c++;
 		}
 	}
+}
+
+void remRequest(struct Requests reqArr[], int arrLength int currentFloor){
+	for (int i = 0; i < arrLength; i++) {
+		if (reqArr[i].floor == currentFloor) {
+			reqArr[i].isReq = 0;
+		}
+	}
+	defragmentArr(reqArr, arrLength);
 }
 
 void addRequest(struct Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
