@@ -22,13 +22,13 @@ void defragmentArr(struct Requests reqArr[], int arrLength) {
 }
 
 void addRequest(struct Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
-	for (int i = 0; i < arrLength; i++) {
-		if (!reqArr[i].isReq) {
-			reqArr[i].isReq = 1;
-			reqArr[i].button = reqButton;
-			reqArr[i].floor = reqFloor;
-		}
+	int i = 0;
+	while (reqArr[i].isReq) {
+		i++;
 	}
+	reqArr[i].isReq = 1;
+	reqArr[i].button = reqButton;
+	reqArr[i].floor = reqFloor;
 }
 
 bool checkIfRequest(struct Requests reqArr[], int arrLength, int currentFloor, int currentDirection) {
