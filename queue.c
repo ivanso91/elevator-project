@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "queue.h"
 
-void remRequest(Requests reqArr[], int arrLength int currentFloor){
+void remRequest(struct Requests reqArr[], int arrLength int currentFloor){
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == currentFloor) {
 			reqArr[i].isReq = 0;
@@ -9,7 +9,19 @@ void remRequest(Requests reqArr[], int arrLength int currentFloor){
 	}
 }
 
-void addRequest(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
+void defragmentArr(struct Requests reqArr[], int arrLength) {
+	int c = 0;
+
+	for (int i = 0; i < arrLength) {
+		if (reqArr[i].isReq) {
+			reqArr[c] = reqArr[i];
+			reqArr[i].isReq = 0;
+			c++;
+		}
+	}
+}
+
+void addRequest(struct Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
 	for (int i = 0; i < arrLength; i++) {
 		if (!reqArr[i].isReq) {
 			reqArr[i].isReq = 1;
@@ -19,7 +31,7 @@ void addRequest(Requests reqArr[], int arrLength, int reqFloor, elev_button_type
 	}
 }
 
-bool checkIfRequest(Requests reqArr[], int arrLength, int currentFloor, int currentDirection) {
+bool checkIfRequest(struct Requests reqArr[], int arrLength, int currentFloor, int currentDirection) {
 	bool isRequested(0);
 	int reqDirection;
 

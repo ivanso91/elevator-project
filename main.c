@@ -2,6 +2,10 @@
 #include "queue.h"
 #include <stdio.h>
 
+typedef short bool;
+#define true 1
+#define false 0
+
 
 int main() {
     // Initialize hardware
