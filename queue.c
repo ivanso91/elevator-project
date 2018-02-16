@@ -12,10 +12,10 @@ void remRequest(struct Requests reqArr[], int arrLength int currentFloor){
 void defragmentArr(struct Requests reqArr[], int arrLength) {
 	int c = 0;
 
-	for (int i = 0; i < arrLength) {
+	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].isReq) {
 			reqArr[c] = reqArr[i];
-			reqArr[i].isReq = 0;
+			if (c != i) reqArr[i].isReq = 0;
 			c++;
 		}
 	}
