@@ -9,8 +9,6 @@
 // Number of floors
 #define N_FLOORS 4
 
-
-
 /**
   Initialize elevator.
   @return Non-zero on success, 0 on failure.

@@ -2,6 +2,7 @@
 #include "queue.h"
 #include "elev.h"
 #include "time.h"
+#include "governor.h"
 
 // CONDITIONS:
 // - Controller iterates through request array for every loop
@@ -17,7 +18,8 @@
 
 // Return new direction based on current direction and remaining requests in queue
 // currentDirection must be passed as DIRN_DOWN, DIRN_UP or DIRN_STOP
-elev_motor_direction_t determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, elev_motor_direction_t currentDir) {
+elev_motor_direction_t determineDirection(Requests reqArr[], int arrLength, 
+	short currentFloor, elev_motor_direction_t currentDir) {
 	elev_motor_direction_t newDir = currentDir; // Keeps elevator in current direction by default
 	int reqSum = 0; // reqSum > 0 if there are any requests in queue
 	bool isReqInDir = 0; // True if there is a request in elevator's current direction
@@ -56,7 +58,7 @@ void serviceFloor(int floor) {
 	elev_set_motor_direction(DIRN_STOP);
 	timer(3);
 
-	newDirection = determineDirection(struct Requests reqArr[], 
+	newDirection = determineDirection(Requests reqArr[], 
 			int arrLength, short currentFloor, elev_motor_direction_t currentDir);
 	elev_set_motor_direction(newDirection);
 }

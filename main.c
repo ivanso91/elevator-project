@@ -19,8 +19,8 @@ int main() {
 
     elev_set_motor_direction(DIRN_UP);
 
-    int reqLen( = 10;
-    struct Requests reqArr[reqLen];
+    int reqLen = 10;
+    Requests reqArr[reqLen];
     short lastFloor, checkFloor, currentDir;
     bool serviceFloor; //Wether or not elevator should stop and service newly arrived floor
     
@@ -36,7 +36,7 @@ int main() {
 
         //Service newly arrived floor if valid request in queue
         if (checkFloor != lastFloor) {
-            serviceFloor = checkIfRequest(reqArr, reqLen, newFloor, currentDir);
+            serviceFloor = checkIfRequest(reqArr, reqLen, checkFloor, currentDir);
             lastFloor = checkFloor;
             elev_set_floor_indicator(checkFloor);
 
@@ -47,13 +47,13 @@ int main() {
         
         // Get button push signal
         for (int i = 1; i < 5; i++) {
-            int pushed(0);
+            int pushed = 0;
             
             //j=0: button up, j=1: button down, j=2: button command
             for (int j = 0; j < 3; j++) { 
                 pushed = elev_get_button_signal(j, i);
                 if (pushed) {
-                    addRequest(reqArr, reqLen, i, (elev_get_button_signal) j)
+                    addRequest(reqArr, reqLen, i, (elev_button_type_t) j);
                 }
             }
         }

@@ -1,3 +1,5 @@
+#include "elev.h"
+
 //CONDITIONS:
 // - Controller iterates through request array for every loop
 // - Elevator shall service all requests in the direction the 
@@ -7,7 +9,7 @@
 
 // Return new direction based on current direction and remaining requests in queue
 // currentDirection must be passed as 0 for down or 1 for up
-elev_motor_direction_t determineDirection(struct Requests reqArr[], int arrLength, short currentFloor, 
+elev_motor_direction_t determineDirection(Requests reqArr[], int arrLength, short currentFloor, 
 		elev_motor_direction_t currentDir);
 
 // Timer that pauses program for given seconds
