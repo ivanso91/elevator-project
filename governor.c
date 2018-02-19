@@ -44,7 +44,7 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength,
 
 void timer(int endTime, Request reqArr[], int arrLength) {
 	time_t initial = time(NULL), diff;
-	Request = singleReq;
+	Request singleReq;
     
     do {
 		// Get button push signal
