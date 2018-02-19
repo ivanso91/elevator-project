@@ -42,11 +42,18 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength,
 	return newDir;
 }
 
-void timer(int endTime) {
+void timer(int endTime, Request reqArr[], int arrLength) {
 	time_t initial = time(NULL), diff;
+	Request = singleReq;
     
     do {
+		// Get button push signal
+		singleReq = handleButtonSignal();
+		// If button pushed, add request to queue
 		
+		if (singleReq.isReq){
+			addRequest(reqArr, arrLength, singleReq.floor, singleReq.button);
+		}
         diff = (time(NULL) - initial);
         
     } while (diff < endTime);
@@ -56,7 +63,7 @@ elev_motor_direction_t handleFloorService(Request reqArr[], int arrLength, int c
 	elev_motor_direction_t newDir;
 
 	elev_set_motor_direction(DIRN_STOP);
-	timer(3);
+	timer(3, reqArr, arrLength);
 
 	newDir = determineDirection(reqArr, arrLength, currentFloor, currentDir);
 	elev_set_motor_direction(newDir);
