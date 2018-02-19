@@ -1,6 +1,5 @@
 #include "stdio.h"
 #include "queue.h"
-#include "elev.h"
 #include "time.h"
 #include "governor.h"
 
@@ -18,27 +17,27 @@
 
 // Return new direction based on current direction and remaining requests in queue
 // currentDirection must be passed as DIRN_DOWN, DIRN_UP or DIRN_STOP
-elev_motor_direction_t determineDirection(Requests reqArr[], int arrLength, 
+elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, 
 	short currentFloor, elev_motor_direction_t currentDir) {
 	elev_motor_direction_t newDir = currentDir; // Keeps elevator in current direction by default
 	int reqSum = 0; // reqSum > 0 if there are any requests in queue
 	bool isReqInDir = 0; // True if there is a request in elevator's current direction
 
-	for (int i = 0; i < arrLenght; i++) {
-		reqSum += arrLength[i].isReq;
+	for (int i = 0; i < arrLength; i++) {
+		reqSum += reqArr[i].isReq;
 
 		if (reqArr[i].isReq) {
 			elev_motor_direction_t diff;
 			diff = reqArr[i].floor - currentFloor;
-			if (diff > 0 && currentDir = DIRN_UP) {
+			if (diff > 0 && currentDir == DIRN_UP) {
 				isReqInDir = 1;
-			} elseif (diff < 0 && currentDir = DIRN_DOWN) isReqInDir = 1;
+			} else if (diff < 0 && currentDir == DIRN_DOWN) isReqInDir = 1; 
 		}
 	}
 
 	if (!isReqInDir) {
 		newDir = -currentDir; // Switch elevator direction direction
-	} elseif (reqSum == 0) newDir = DIRN_STOP; // No requests -> stop elevator
+	} else if (reqSum == 0) newDir = DIRN_STOP; // No requests -> stop elevator
 
 	return newDir;
 }
@@ -47,18 +46,20 @@ void timer(int endTime) {
 	time_t initial = time(NULL), diff;
     
     do {
+		
         diff = (time(NULL) - initial);
         
     } while (diff < endTime);
 }
 
-void handleFloorService(int floor) {
-	elev_motor_direction_t newDirection;
+elev_motor_direction_t handleFloorService(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+	elev_motor_direction_t newDir;
 
 	elev_set_motor_direction(DIRN_STOP);
 	timer(3);
 
-	newDirection = determineDirection(Requests reqArr[], 
-			int arrLength, short currentFloor, elev_motor_direction_t currentDir);
-	elev_set_motor_direction(newDirection);
+	newDir = determineDirection(reqArr, arrLength, currentFloor, currentDir);
+	elev_set_motor_direction(newDir);
+	
+	return newDir;
 }
