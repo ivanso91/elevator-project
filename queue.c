@@ -22,14 +22,28 @@ void remRequest(Requests reqArr[], int arrLength int currentFloor){
 	defragmentArr(reqArr, arrLength);
 }
 
+bool checkIfExists(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton){
+	bool exists = 0;
+	
+	for (int i = 0; i < arrLength) {
+		if (reqArr[i].button == reqButton && reqArr[i].floor == reqFloor)
+			exists = 1;
+	}
+	return exists;
+}
+
 void addRequest(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
 	int i = 0;
-	while (reqArr[i].isReq) {
-		i++;
+	
+	if (!checkIfExists(reqArr[], arrLength, reqFloor, reqButton)) {
+		while (reqArr[i].isReq) {
+			i++;
+		}
+		reqArr[i].isReq = 1;
+		reqArr[i].button = reqButton;
+		reqArr[i].floor = reqFloor;
 	}
-	reqArr[i].isReq = 1;
-	reqArr[i].button = reqButton;
-	reqArr[i].floor = reqFloor;
+
 }
 
 bool checkIfRequest(Requests reqArr[], int arrLength, int currentFloor, int currentDirection) {

@@ -3,11 +3,6 @@
 #include "governor.h"
 #include <stdio.h>
 
-typedef short bool;
-#define true 1
-#define false 0
-
-
 int main() {
     // Initialize hardware
     if (!elev_init()) {
@@ -22,7 +17,7 @@ int main() {
     int reqLen = 10;
     Requests reqArr[reqLen];
     short lastFloor, checkFloor, currentDir;
-    bool serviceFloor; //Wether or not elevator should stop and service newly arrived floor
+    bool serviceFloor; //Wether or not elevator should stop and service newly reached floor
     
     while (1) {
         // Change direction when we reach top/bottom floor
@@ -34,8 +29,8 @@ int main() {
         
         checkFloor = elev_get_floor_sensor_signal();
 
-        //Service newly arrived floor if valid request in queue
-        if (checkFloor != lastFloor) {
+        // Service newly reached floor if valid request in queue
+        if (checkFloor != -1 && checkFloor != lastFloor) {
             serviceFloor = checkIfRequest(reqArr, reqLen, checkFloor, currentDir);
             lastFloor = checkFloor;
             elev_set_floor_indicator(checkFloor);

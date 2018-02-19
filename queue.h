@@ -1,8 +1,9 @@
 #include "stdio.h"
 
-typedef short bool;
-#define true 1
-#define false 0
+typedef enum tag_bool {
+    false = 0,
+    true = 1
+} bool;
 
 typedef struct RequestsTag{
 	bool isReq;
@@ -15,6 +16,8 @@ void defragmentArr(Requests reqArr[], int arrLength);
 
 // Takes current floor and removes all requests at that floor
 void remRequest(Requests reqArr[], int arrLength, int currentFloor);
+
+bool checkIfExists(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton);
 
 // Adds a request to the end of requests array
 void addRequest(Requests reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton);

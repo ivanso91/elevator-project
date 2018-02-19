@@ -52,7 +52,7 @@ void timer(int endTime) {
     } while (diff < endTime);
 }
 
-void serviceFloor(int floor) {
+void handleFloorService(int floor) {
 	elev_motor_direction_t newDirection;
 
 	elev_set_motor_direction(DIRN_STOP);
