@@ -19,7 +19,7 @@ Request handleButtonSignal();
 void defragmentArr(Request reqArr[], int arrLength);
 
 // Takes current floor and removes all requests at that floor
-void remRequest(Request reqArr[], int arrLength, int currentFloor);
+void removeRequest(Request reqArr[], int arrLength, int currentFloor);
 
 bool checkIfExists(Request reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton);
 
@@ -30,5 +30,4 @@ void addRequest(Request reqArr[], int arrLength, int reqFloor, elev_button_type_
 // the elevator stops and all requests at that floor is deleted from queue. If outside request 
 // for current floor is true, AND if it is requested in the current direction, the elevator
 // stops and all requests from that floor is deleted from queue.
-// Current direction is passed as 0 for down and 1 for up.
-bool checkIfRequest(Request reqArr[], int arrLength, int currentFloor, int currentDirection);
+bool checkIfRequest(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir);

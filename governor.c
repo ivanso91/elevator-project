@@ -17,27 +17,14 @@
 
 // Return new direction based on current direction and remaining requests in queue
 // currentDirection must be passed as DIRN_DOWN, DIRN_UP or DIRN_STOP
-elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, 
-	short currentFloor, elev_motor_direction_t currentDir) {
-	elev_motor_direction_t newDir = currentDir; // Keeps elevator in current direction by default
-	int reqSum = 0; // reqSum > 0 if there are any requests in queue
-	bool isReqInDir = 0; // True if there is a request in elevator's current direction
+elev_motor_direction_t determineDirection(int currentFloor, int targetFloor) {
+	elev_motor_direction_t newDir;
 
-	for (int i = 0; i < arrLength; i++) {
-		reqSum += reqArr[i].isReq;
-
-		if (reqArr[i].isReq) {
-			elev_motor_direction_t diff;
-			diff = reqArr[i].floor - currentFloor;
-			if (diff > 0 && currentDir == DIRN_UP) {
-				isReqInDir = 1;
-			} else if (diff < 0 && currentDir == DIRN_DOWN) isReqInDir = 1; 
-		}
-	}
-
-	if (!isReqInDir) {
-		newDir = -currentDir; // Switch elevator direction direction
-	} else if (reqSum == 0) newDir = DIRN_STOP; // No requests -> stop elevator
+	if (targetFloor > currentFloor) {
+		newDir = DIRN_UP;
+	} else if (targetFloor < currentFloor) {
+		newDir = DIRN_DOWN;
+	} else newDir = DIRN_STOP;
 
 	return newDir;
 }
@@ -59,14 +46,9 @@ void timer(int endTime, Request reqArr[], int arrLength) {
     } while (diff < endTime);
 }
 
-elev_motor_direction_t handleFloorService(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
-	elev_motor_direction_t newDir;
-
+void handleFloorService(Request reqArr[], int arrLength, int currentFloor) {
 	elev_set_motor_direction(DIRN_STOP);
 	timer(3, reqArr, arrLength);
 
-	newDir = determineDirection(reqArr, arrLength, currentFloor, currentDir);
-	elev_set_motor_direction(newDir);
-	
-	return newDir;
+	removeRequest(reqArr, arrLength, currentFloor); // Remove requests on serviced floor
 }

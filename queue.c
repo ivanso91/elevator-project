@@ -30,7 +30,7 @@ void defragmentArr(Request reqArr[], int arrLength) {
 	}
 }
 
-void remRequest(Request reqArr[], int arrLength, int currentFloor){
+void removeRequest(Request reqArr[], int arrLength, int currentFloor){
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == currentFloor) {
 			reqArr[i].isReq = 0;
@@ -62,16 +62,24 @@ void addRequest(Request reqArr[], int arrLength, int reqFloor, elev_button_type_
 	}
 }
 
-bool checkIfRequest(Request reqArr[], int arrLength, int currentFloor, int currentDirection) {
+bool checkIfRequest(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
-	int reqDirection;
+	elev_button_type_t reqButtonType;
 
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].isReq) {
-			reqDirection = (int) reqArr[i].button;
-			if ((reqDirection == currentDirection) || reqDirection == 2) {
-				isRequested = 1;
-				remRequest(reqArr, arrLength, currentFloor);
+			switch (reqArr[i].button) {
+				case BUTTON_CALL_DOWN :
+					if (currentDir == DIRN_DOWN) isRequested = true;
+					break;
+				case BUTTON_CALL_UP :
+					if (currentDir == DIRN_UP) isRequested = true;
+					break;
+				case BUTTON_COMMAND :
+					isRequested = true;
+				default :
+					isRequested = false;
+
 			}
 		}
 	}

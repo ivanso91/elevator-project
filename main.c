@@ -12,13 +12,14 @@ int main() {
 
     printf("Press STOP button to stop elevator and exit program.\n");
 
-    elev_set_motor_direction(DIRN_UP);
-
-    int reqLen = 10;
+    int reqLen = 10, targetFloor = -1;
     Request reqArr[reqLen], singleReq;
-    short lastFloor, checkFloor;
-	elev_motor_direction_t currentDir;
+    int lastFloor, checkFloor;
+    elev_motor_direction_t currentDir, newDir;
     bool serviceFloor; //Wether or not elevator should stop and service newly reached floor
+
+    elev_set_motor_direction(DIRN_UP);
+    currentDir = DIRN_UP;
     
     while (1) {
         // Change direction when we reach top/bottom floor
@@ -30,17 +31,31 @@ int main() {
 			currentDir = DIRN_UP;
         }
 		
+
+        // Check which floor elevator is in
         checkFloor = elev_get_floor_sensor_signal();
 
-        // Service newly reached floor if valid request in queue
+        // Service newly reached floor if request for durrent direction in queue there
         if (checkFloor != -1 && checkFloor != lastFloor) {
-            serviceFloor = checkIfRequest(reqArr, reqLen, checkFloor, currentDir);
-            lastFloor = checkFloor;
             elev_set_floor_indicator(checkFloor);
+            serviceFloor = checkIfRequest(reqArr, reqLen, checkFloor, currentDir);
 
-            if (serviceFloor) {
-                currentDir = handleFloorService(reqArr, reqLen, checkFloor, currentDir);
-            }
+            if (serviceFloor) handleFloorService(reqArr, reqLen, checkFloor);
+           
+            lastFloor = checkFloor;
+        }
+
+        // Select new target floor and direction from queue
+        targetFloor = reqArr[0].floor;
+
+        // If new target floor is at elevator's current floor, service it
+        if (targetFloor == checkFloor) handleFloorService(reqArr, reqLen, checkFloor);
+
+        // Select new direction based on new target floor and elevator's current floor
+        newDir = determineDirection(checkFloor, targetFloor);
+        if (newDir != currentDir) {
+            elev_set_motor_direction(newDir);
+            currentDir = newDir;
         }
         
         // Get button push signal
