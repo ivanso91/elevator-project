@@ -33,23 +33,24 @@ int main() {
         currentFloor = elev_get_floor_sensor_signal();
 
 		// STATE - ELEVATOR AT FLOOR:
-        if (currentFloor != -1)) {
+        if (currentFloor != -1) {
 			// Set floor light indicator if new floor
 			if (currentFloor != lastFloor) {
 				elev_set_floor_indicator(currentFloor);
 				lastFloor = currentFloor;
 			}
 			// Service if request in current floor
-			if (isRequestHere(reqArr, maxReq, lastFloor, currentFloor, currentDir)) {
+			if (isRequestHere(reqArr, maxReq, currentFloor, currentDir)) {
 				handleFloorService(reqArr, maxReq, currentFloor);
 			}
 			// Determine new direction for elevator - allways if elevator is in floor
-			newDir = determineDirection(reqArr, maxReq, lastFloor, currentDir);
+			newDir = determineDirection(reqArr, maxReq, currentDir);
 			// Set elevator direction if changed
 			if (newDir != currentDir) {
 				elev_set_motor_direction(newDir);
 				currentDir = newDir;
-				timer(1); // Avoid stopping again at the same floor after elevator start moving
+                // Avoid stopping again at the same floor after elevator start moving
+				timer(1, reqArr, maxReq, currentDir); 
 			}
 		}
         

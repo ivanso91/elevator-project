@@ -15,7 +15,7 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_
 
 // Timer that pauses program for given seconds
 // DOES STORE customer requests during pause
-void timer(int endTime, Request reqArr[], int arrLength);
+void timer(int endTime, Request reqArr[], int arrLength, elev_motor_direction_t currentDir);
 
 //Stops motor (open doors) for 3 sec at newly arrived floor and deletes all request at that floor
 void handleFloorService(Request reqArr[], int arrLength, int currentFloor);

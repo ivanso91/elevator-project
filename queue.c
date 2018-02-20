@@ -36,7 +36,7 @@ void removeRequest(Request reqArr[], int arrLength, int currentFloor){
 			reqArr[i].isReq = 0;
 			reqArr[i].floor = 0;
 			
-			elev_set_button_lamp(reqArr.button, currentFloor, 0);
+			elev_set_button_lamp(reqArr[i].button, currentFloor, 0);
 		}
 	}
 	defragmentArr(reqArr, arrLength);
@@ -69,7 +69,7 @@ void addRequest(Request reqArr[], int arrLength, int currentFloor, Request newRe
 	}
 }
 
-bool isRequestHere(Request reqArr[], int arrLength, int lastFloor, int currentFloor, elev_motor_direction_t currentDir) {
+bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
 	elev_button_type_t reqButtonType;
 
@@ -79,14 +79,14 @@ bool isRequestHere(Request reqArr[], int arrLength, int lastFloor, int currentFl
 				case BUTTON_CALL_DOWN :
 					if (currentDir == DIRN_DOWN || currentDir == DIRN_STOP) {
 						isRequested = true; 
-					} else if (!requestInDir(reqArr, arrLenght, lastFloor, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
 				case BUTTON_CALL_UP :
 					if (currentDir == DIRN_UP || currentDir == DIRN_STOP) {
 						isRequested = true;
-					} else if (!requestInDir(reqArr, arrLenght, lastFloor, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
@@ -98,14 +98,14 @@ bool isRequestHere(Request reqArr[], int arrLength, int lastFloor, int currentFl
 	return isRequested;
 }
 
-bool requestInDir(Request reqArr[], int arrLenght, int lastFloor, elev_motor_direction_t currentDir) {
+bool requestInDir(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isReqInDir = false;
 	int helpVar;
 	
-	if (lastFloor != -1) {
+	if (currentFloor != -1) {
 		for (int i = 0; i < arrLength; i++) {
-			helpVar = lastFloor-reqArr[i].floor)*currentDir;
-			if((helpVar < 0) isReqInDir = true;
+			helpVar = (currentFloor-reqArr[i].floor)*currentDir;
+			if (helpVar < 0) isReqInDir = true;
 		}
 	}
 	return isReqInDir;
