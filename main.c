@@ -12,57 +12,52 @@ int main() {
 
     printf("Press STOP button to stop elevator and exit program.\n");
 
-    int reqLen = 10, targetFloor = -1;
-    Request reqArr[reqLen], singleReq;
-    int lastFloor, checkFloor;
+    int maxReq = (N_FLOORS - 2)*2 + N_FLOORS + 2; // Maximal number of unique requests in queue
+    Request reqArr[maxReq], newReq;
+    int lastFloor = 0, currentFloor = 0;
     elev_motor_direction_t currentDir, newDir;
-    bool serviceFloor; //Wether or not elevator should stop and service newly reached floor
-
-    elev_set_motor_direction(DIRN_UP);
-    currentDir = DIRN_UP;
+	
+	// Get current floor and set initial direction
+	currentFloor = elev_get_floor_sensor_signal();
+	if (currentFloor == -1) {
+		elev_set_motor_direction(DIRN_DOWN);
+		currentDir = DIRN_DOWN;
+	} else {
+		currentDir = DIRN_STOP;
+        elev_set_floor_indicator(currentFloor);
+		lastFloor = currentFloor;
+	}
     
     while (1) {
-        // Change direction when we reach top/bottom floor
-        if (elev_get_floor_sensor_signal() == N_FLOORS - 1) {
-            elev_set_motor_direction(DIRN_DOWN);
-			currentDir = DIRN_DOWN;
-        } else if (elev_get_floor_sensor_signal() == 0) {
-            elev_set_motor_direction(DIRN_UP);
-			currentDir = DIRN_UP;
-        }
-		
+		// Get current floor
+        currentFloor = elev_get_floor_sensor_signal();
 
-        // Check which floor elevator is in
-        checkFloor = elev_get_floor_sensor_signal();
-
-        // Service newly reached floor if request for durrent direction in queue there
-        if (checkFloor != -1 && checkFloor != lastFloor) {
-            elev_set_floor_indicator(checkFloor);
-            serviceFloor = checkIfRequest(reqArr, reqLen, checkFloor, currentDir);
-
-            if (serviceFloor) handleFloorService(reqArr, reqLen, checkFloor);
-           
-            lastFloor = checkFloor;
-        }
-
-        // Select new target floor and direction from queue
-        targetFloor = reqArr[0].floor;
-
-        // If new target floor is at elevator's current floor, service it
-        if (targetFloor == checkFloor) handleFloorService(reqArr, reqLen, checkFloor);
-
-        // Select new direction based on new target floor and elevator's current floor
-        newDir = determineDirection(checkFloor, targetFloor);
-        if (newDir != currentDir) {
-            elev_set_motor_direction(newDir);
-            currentDir = newDir;
-        }
+		// STATE - ELEVATOR AT FLOOR:
+        if (currentFloor != -1)) {
+			// Set floor light indicator if new floor
+			if (currentFloor != lastFloor) {
+				elev_set_floor_indicator(currentFloor);
+				lastFloor = currentFloor;
+			}
+			// Service if request in current floor
+			if (isRequestHere(reqArr, maxReq, lastFloor, currentFloor, currentDir)) {
+				handleFloorService(reqArr, maxReq, currentFloor);
+			}
+			// Determine new direction for elevator - allways if elevator is in floor
+			newDir = determineDirection(reqArr, maxReq, lastFloor, currentDir);
+			// Set elevator direction if changed
+			if (newDir != currentDir) {
+				elev_set_motor_direction(newDir);
+				currentDir = newDir;
+				timer(1); // Avoid stopping again at the same floor after elevator start moving
+			}
+		}
         
         // Get button push signal
-		singleReq = handleButtonSignal();
+		newReq = handleButtonSignal();
 		// If button pushed, add request to queue
-		if (singleReq.isReq){
-			addRequest(reqArr, reqLen, singleReq.floor, singleReq.button);
+		if (newReq.isReq){
+			addRequest(reqArr, maxReq, currentFloor, newReq, currentDir);
 		}
 
         // Stop elevator and exit program if the stop button is pressed

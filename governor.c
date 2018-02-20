@@ -2,6 +2,7 @@
 #include "queue.h"
 #include "time.h"
 #include "governor.h"
+#include "elev.h"
 
 // CONDITIONS:
 // - Controller iterates through request array for every loop
@@ -15,22 +16,40 @@
 // is opposite of elevator current direction, they will not be picked up untill 
 // elevator has turned.
 
-// Return new direction based on current direction and remaining requests in queue
+// Return new direction based on current direction and remaining requests in queue    
+// Elevator should finish all requests in current direction before turning
 // currentDirection must be passed as DIRN_DOWN, DIRN_UP or DIRN_STOP
-elev_motor_direction_t determineDirection(int currentFloor, int targetFloor) {
-	elev_motor_direction_t newDir;
 
-	if (targetFloor > currentFloor) {
-		newDir = DIRN_UP;
-	} else if (targetFloor < currentFloor) {
-		newDir = DIRN_DOWN;
+// Extended sign function; returns 0 if inout is zero
+int signExtd(int x) {
+	if (x > 0) {
+		return 1;
+	} else if (x == 0){
+		return 0;
+	} else {
+		return -1;
+	}
+}
+
+elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
+	elev_motor_direction_t newDir;
+	int currentFloor = elev_get_floor_sensor_signal();
+
+	if (currentDir != DIRN_STOP) {
+		if(requestInDir(reqArr, arrLength, lastFloor, currentDir)) {
+			newDir = currentDir;
+		} else if (requestInDir(reqArr, arrLength, lastFloor, -currentDir) {
+			newDir = -currentDir;
+		} else newDir = DIRN_STOP;
+	} else if (reqArr[0].isReq){
+		newDir = signExtd(reqArr[0].floor - currentFloor);
 	} else newDir = DIRN_STOP;
 
 	return newDir;
 }
 
-void timer(int endTime, Request reqArr[], int arrLength) {
-	time_t initial = time(NULL), diff;
+void timer(int endTime, Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
+	time_t t_0 = time(NULL), diff;
 	Request singleReq;
     
     do {
@@ -39,16 +58,18 @@ void timer(int endTime, Request reqArr[], int arrLength) {
 		// If button pushed, add request to queue
 		
 		if (singleReq.isReq){
-			addRequest(reqArr, arrLength, singleReq.floor, singleReq.button);
+			addRequest(reqArr, arrLength, singleReq.floor, singleReq.button, currentDir);
 		}
-        diff = (time(NULL) - initial);
+        diff = (time(NULL) - t_0);
         
     } while (diff < endTime);
 }
 
 void handleFloorService(Request reqArr[], int arrLength, int currentFloor) {
 	elev_set_motor_direction(DIRN_STOP);
+	elev_set_door_open_lamp(1);
 	timer(3, reqArr, arrLength);
+	elev_set_door_open_lamp(0);
 
 	removeRequest(reqArr, arrLength, currentFloor); // Remove requests on serviced floor
 }

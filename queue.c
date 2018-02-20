@@ -34,54 +34,79 @@ void removeRequest(Request reqArr[], int arrLength, int currentFloor){
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == currentFloor) {
 			reqArr[i].isReq = 0;
+			reqArr[i].floor = 0;
+			
+			elev_set_button_lamp(reqArr.button, currentFloor, 0);
 		}
 	}
 	defragmentArr(reqArr, arrLength);
 }
 
-bool checkIfExists(Request reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton){
+bool isInQueue(Request reqArr[], int arrLength, Request newReq){
 	bool exists = 0;
 	
 	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].button == reqButton && reqArr[i].floor == reqFloor)
+		if (reqArr[i].button == newReq.button && reqArr[i].floor == newReq.floor)
 			exists = 1;
 	}
 	return exists;
 }
 
-void addRequest(Request reqArr[], int arrLength, int reqFloor, elev_button_type_t reqButton) {
+void addRequest(Request reqArr[], int arrLength, int currentFloor, Request newReq, elev_motor_direction_t currentDir) {
 	int i = 0;
 	
-	if (!checkIfExists(reqArr, arrLength, reqFloor, reqButton)) {
+	if (newReq.floor == currentFloor && currentDir == DIRN_STOP) {
+		//Do nothing, elevator door is already open at floor destination
+	} else if (!isInQueue(reqArr, arrLength, newReq)) {
 		while (reqArr[i].isReq) {
 			i++;
 		}
 		reqArr[i].isReq = 1;
-		reqArr[i].button = reqButton;
-		reqArr[i].floor = reqFloor;
+		reqArr[i].button = newReq.button;
+		reqArr[i].floor = newReq.floor;
+		
+		elev_set_button_lamp(newReq.button, newReq.floor-1, 1);
 	}
 }
 
-bool checkIfRequest(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+bool isRequestHere(Request reqArr[], int arrLength, int lastFloor, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
 	elev_button_type_t reqButtonType;
 
 	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].isReq) {
+		if (reqArr[i].floor == currentFloor) {
 			switch (reqArr[i].button) {
 				case BUTTON_CALL_DOWN :
-					if (currentDir == DIRN_DOWN) isRequested = true;
+					if (currentDir == DIRN_DOWN || currentDir == DIRN_STOP) {
+						isRequested = true; 
+					} else if (!requestInDir(reqArr, arrLenght, lastFloor, currentDir)) {
+						isRequested = true;
+					}
 					break;
 				case BUTTON_CALL_UP :
-					if (currentDir == DIRN_UP) isRequested = true;
+					if (currentDir == DIRN_UP || currentDir == DIRN_STOP) {
+						isRequested = true;
+					} else if (!requestInDir(reqArr, arrLenght, lastFloor, currentDir)) {
+						isRequested = true;
+					}
 					break;
 				case BUTTON_COMMAND :
 					isRequested = true;
-				default :
-					isRequested = false;
-
 			}
 		}
 	}
 	return isRequested;
+}
+
+bool requestInDir(Request reqArr[], int arrLenght, int lastFloor, elev_motor_direction_t currentDir) {
+	bool isReqInDir = false;
+	int helpVar;
+	
+	if (lastFloor != -1) {
+		for (int i = 0; i < arrLength; i++) {
+			helpVar = lastFloor-reqArr[i].floor)*currentDir;
+			if((helpVar < 0) isReqInDir = true;
+		}
+	}
+	return isReqInDir;
 }
