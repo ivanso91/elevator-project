@@ -16,7 +16,7 @@ int main() {
     Request reqArr[maxReq], newReq;
     int lastFloor = 0, currentFloor = 0;
     elev_motor_direction_t currentDir, newDir;
-	
+
 	// Get current floor and set initial direction
 	currentFloor = elev_get_floor_sensor_signal();
 	if (currentFloor == -1) {
@@ -25,7 +25,12 @@ int main() {
         currentDir = elev_set_motor_direction(DIRN_STOP);
         lastFloor = elev_set_floor_indicator(currentFloor);
 	}
-    
+
+    // Stop elevator and delete requests if stop button is pressed
+    if (elev_get_stop_signal()) {
+        stopElevator(reqArr, maxReq);
+    }
+
     while (1) {
 		// Get current floor
         currentFloor = elev_get_floor_sensor_signal();
@@ -57,10 +62,9 @@ int main() {
 			addRequest(reqArr, maxReq, newReq, currentDir);
 		}
 
-        // Stop elevator and exit program if the stop button is pressed
+        // Stop elevator and delete requests if stop button is pressed
         if (elev_get_stop_signal()) {
-            elev_set_motor_direction(DIRN_STOP);
-            break;
+            stopElevator(reqArr, maxReq);
         }
     }
 
