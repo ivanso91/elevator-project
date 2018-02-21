@@ -1,7 +1,7 @@
 #include "stdio.h"
 #include "queue.h"
 
-void initReqArray(Request reqArr[], int arrLength) {
+void init_req_array(Request reqArr[], int arrLength) {
 	for (int i = 0; i < arrLength; i++) {
 		reqArr[i].isReq = 0;
 		reqArr[i].floor = -1;
@@ -9,7 +9,7 @@ void initReqArray(Request reqArr[], int arrLength) {
 	}
 }
 
-Request handleButtonSignal() {
+Request handle_button_signal() {
 	Request tempReq = {false, BUTTON_COMMAND, -1};
 	elev_button_type_t tempButton;
 	
@@ -40,7 +40,7 @@ Request handleButtonSignal() {
 	return tempReq;
 }
 
-void defragmentArr(Request reqArr[], int arrLength) {
+void defragment_arr(Request reqArr[], int arrLength) {
 	int c = 0;
 
 	for (int i = 0; i < arrLength; i++) {
@@ -52,7 +52,7 @@ void defragmentArr(Request reqArr[], int arrLength) {
 	}
 }
 
-void removeRequest(Request reqArr[], int arrLength, int floor){
+void remove_request(Request reqArr[], int arrLength, int floor){
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == floor) {
 			reqArr[i].isReq = 0;
@@ -62,10 +62,10 @@ void removeRequest(Request reqArr[], int arrLength, int floor){
 			elev_set_button_lamp(reqArr[i].button, floor, 0);
 		}
 	}
-	defragmentArr(reqArr, arrLength);
+	defragment_arr(reqArr, arrLength);
 }
 
-bool isInQueue(Request reqArr[], int arrLength, Request newReq){
+bool is_in_queue(Request reqArr[], int arrLength, Request newReq){
 	bool exists = 0;
 	
 	for (int i = 0; i < arrLength; i++) {
@@ -75,11 +75,11 @@ bool isInQueue(Request reqArr[], int arrLength, Request newReq){
 	return exists;
 }
 
-void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_direction_t currentDir) {
+void add_request(Request reqArr[], int arrLength, Request newReq, elev_motor_direction_t currentDir) {
 	int i = 0;
 	int currentFloor = elev_get_floor_sensor_signal();
 	
-	if (!isInQueue(reqArr, arrLength, newReq)) {
+	if (!is_in_queue(reqArr, arrLength, newReq)) {
 		while (reqArr[i].isReq && i < arrLength) {
 			i++;
 		}
@@ -88,12 +88,14 @@ void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_dire
 		reqArr[i].floor = newReq.floor;
 		
 		printf("Error here: 2\n");
-		elev_set_button_lamp(newReq.button, newReq.floor, 1);
+		if (reqArr[i].floor != currentFloor) {
+			elev_set_button_lamp(newReq.button, newReq.floor, 1);
+		}
 	}
 }
 
 // Something wrong here... Thinks allways request in 1st floor(?)
-bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+bool is_request_here(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
 	//elev_button_type_t reqButtonType;
 
@@ -103,14 +105,14 @@ bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor
 				case BUTTON_CALL_DOWN :
 					if (currentDir == DIRN_DOWN || currentDir == DIRN_STOP) {
 						isRequested = true; 
-					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+					} else if (!is_request_in_dir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
 				case BUTTON_CALL_UP :
 					if (currentDir == DIRN_UP || currentDir == DIRN_STOP) {
 						isRequested = true;
-					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+					} else if (!is_request_in_dir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
@@ -123,7 +125,7 @@ bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor
 }
 
 // Something wrong here (thinks there are requests in floor below)
-bool requestInDir(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+bool is_request_in_dir(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isReqInDir = false;
 	int fdiff;
 	
@@ -140,11 +142,4 @@ bool requestInDir(Request reqArr[], int arrLength, int currentFloor, elev_motor_
 		}
 	}
 	return isReqInDir;
-}
-
-void printRequests(Request reqArr[], int arrlength) {
-	for (int i = 0; i < arrlength; i++) {
-		printf("%i, ", reqArr[i].isReq);
-		printf("%i\n", reqArr[i].floor);
-	}
 }
