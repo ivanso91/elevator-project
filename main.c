@@ -70,6 +70,8 @@ int main() {
         // Stop elevator and delete requests if stop button is pressed
         if (elev_get_stop_signal()) {
             stopElevator(reqArr, maxReq);
+            newDir = determineDirection(reqArr, maxReq, currentFloor, currentDir);
+            currentDir = elev_set_motor_direction(newDir);
         }
 
         // Stop elevator and quit program if obstruction activated
