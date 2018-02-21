@@ -54,7 +54,6 @@ int main() {
 				currentDir = elev_set_motor_direction(newDir);
                 // Avoid stopping again at the same floor after elevator start moving
 				// timer(1, reqArr, maxReq, currentDir); 
-                printDirection(newDir);
 			}
 		}
 
