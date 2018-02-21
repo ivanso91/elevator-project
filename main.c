@@ -17,6 +17,8 @@ int main() {
     int lastFloor = -1, currentFloor;
     elev_motor_direction_t currentDir, newDir;
 
+    elev_set_motor_direction(DIRN_STOP);
+
     initReqArray(reqArr, maxReq);
 
 	// Get current floor and set initial direction
