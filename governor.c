@@ -74,11 +74,12 @@ void handleFloorService(Request reqArr[], int arrLength) {
 	elev_set_door_open_lamp(0);
 
 	removeRequest(reqArr, arrLength, currentFloor); // Remove requests on serviced floor
+	printRequests(reqArr, arrLength);
 }
 
 void stopElevator(Request reqArr[], int arrLength) {
 	elev_set_motor_direction(DIRN_STOP);
-	for (int i = 1; i < (N_FLOORS + 1); i++) {
+	for (int i = 0; i < (N_FLOORS); i++) {
 		removeRequest(reqArr, arrLength, i);
 	}
 	if (elev_get_floor_sensor_signal()) {
@@ -87,6 +88,6 @@ void stopElevator(Request reqArr[], int arrLength) {
 	while (elev_get_stop_signal()) {
 		// Do nothing
 	}
-	timer(1, reqArr, arrLength, DIRN_STOP);
+	timer(3, reqArr, arrLength, DIRN_STOP);
 	elev_set_door_open_lamp(0);
 }

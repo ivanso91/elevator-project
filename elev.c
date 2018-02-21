@@ -93,13 +93,13 @@ void elev_set_stop_lamp(int value) {
 
 int elev_get_floor_sensor_signal(void) {
     if (io_read_bit(SENSOR_FLOOR1))
-        return 1;
+        return 0;
     else if (io_read_bit(SENSOR_FLOOR2))
-        return 2;
+        return 1;
     else if (io_read_bit(SENSOR_FLOOR3))
-        return 3;
+        return 2;
     else if (io_read_bit(SENSOR_FLOOR4))
-        return 4;
+        return 3;
     else
         return -1;
 }
@@ -136,7 +136,6 @@ int elev_get_button_signal(elev_button_type_t button, int floor) {
 }
 
 void elev_set_button_lamp(elev_button_type_t button, int floor, int value) {
-    floor = floor - 1;
     assert(floor >= 0);
     assert(floor < N_FLOORS);
     assert(!(button == BUTTON_CALL_UP && floor == N_FLOORS - 1));

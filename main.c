@@ -10,12 +10,14 @@ int main() {
         return 1;
     }
 
-    printf("Press STOP button to stop elevator and exit program.\n");
+    printf("Activate OBSTRUCTION button to stop elevator and exit program.\n");
 
     int maxReq = (N_FLOORS - 2)*2 + N_FLOORS + 2; // Maximal number of unique requests in queue
     Request reqArr[maxReq], newReq;
-    int lastFloor = 0, currentFloor = 0;
+    int lastFloor = -1, currentFloor;
     elev_motor_direction_t currentDir, newDir;
+
+    initReqArray(reqArr, maxReq);
 
 	// Get current floor and set initial direction
 	currentFloor = elev_get_floor_sensor_signal();
@@ -54,6 +56,7 @@ int main() {
 				timer(1, reqArr, maxReq, currentDir); 
 			}
 		}
+
         
         // Get button push signal
 		newReq = handleButtonSignal();
@@ -65,6 +68,12 @@ int main() {
         // Stop elevator and delete requests if stop button is pressed
         if (elev_get_stop_signal()) {
             stopElevator(reqArr, maxReq);
+        }
+
+        // Stop elevator and quit program if obstruction activated
+        if (elev_get_obstruction_signal()) {
+        	elev_set_motor_direction(DIRN_STOP);
+        	break;
         }
     }
 

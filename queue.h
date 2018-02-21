@@ -12,6 +12,8 @@ typedef struct RequestsTag{
 	int floor;
 }Request; 
 
+void initReqArray(Request reqArr[], int arrLength);
+
 // Returns button structure for every iteration, with false-/zero-values if no buttons pressed.
 Request handleButtonSignal();
 
@@ -35,3 +37,5 @@ bool isRequestHere(Request reqArr[], int arrLength, elev_motor_direction_t curre
 
 //Returns true if there are any requests on subsequent floors in elevator's current direction.
 bool requestInDir(Request reqArr[], int arrLenght, elev_motor_direction_t currentDir);
+
+void printRequests(Request reqArr[], int arrlength);
