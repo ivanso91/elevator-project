@@ -51,7 +51,6 @@ int main() {
 			}
 			// Determine new direction for elevator - allways if elevator is in floor
 			newDir = determineDirection(reqArr, maxReq, lastFloor, currentDir);
-			// Set elevator direction if changed
             currentDir = elev_set_motor_direction(newDir);
             // Avoid stopping again at the same floor after elevator start moving (?)
             // timer(1, reqArr, maxReq, currentDir); 
@@ -67,8 +66,10 @@ int main() {
 
         // Stop elevator and delete requests if stop button is pressed
         if (elev_get_stop_signal()) {
-            currentDir = DIRN_STOP;
             stopElevator(reqArr, maxReq);
+            // Determine new direction for elevator - allways if elevator is in floor
+            newDir = determineDirection(reqArr, maxReq, lastFloor, currentDir);
+            currentDir = elev_set_motor_direction(newDir);
         }
 
         // Stop elevator and quit program if obstruction activated
