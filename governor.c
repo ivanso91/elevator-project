@@ -31,17 +31,17 @@ int signExtd(int x) {
 	}
 }
 
-elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, int lastFloor, elev_motor_direction_t currentDir) {
 	elev_motor_direction_t newDir;
 
 	if (currentDir != DIRN_STOP) {
-		if(requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+		if(requestInDir(reqArr, arrLength, lastFloor, currentDir)) {
 			newDir = currentDir;
-		} else if (requestInDir(reqArr, arrLength, currentFloor, -currentDir)) {
+		} else if (requestInDir(reqArr, arrLength, lastFloor, -currentDir)) {
 			newDir = -currentDir;
 		} else newDir = DIRN_STOP;
-	} else if (reqArr[0].isReq && (currentFloor != -1)){
-		newDir = signExtd(reqArr[0].floor - currentFloor);
+	} else if (reqArr[0].isReq && (lastFloor != -1)){
+		newDir = signExtd(reqArr[0].floor - lastFloor);
 	} else newDir = DIRN_STOP;
 
 	printDirection(newDir);
@@ -79,6 +79,7 @@ void handleFloorService(Request reqArr[], int arrLength) {
 
 void stopElevator(Request reqArr[], int arrLength) {
 	int currentFloor = elev_get_floor_sensor_signal();
+
 	elev_set_motor_direction(DIRN_STOP);
 	for (int i = 0; i < (N_FLOORS); i++) {
 		removeRequest(reqArr, arrLength, i);
