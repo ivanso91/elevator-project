@@ -19,7 +19,7 @@ Request handleButtonSignal();
 void defragmentArr(Request reqArr[], int arrLength);
 
 // Takes current floor and removes all requests at that floor.
-void removeRequest(Request reqArr[], int arrLength);
+void removeRequest(Request reqArr[], int arrLength, int floor);
 
 // Returns true if given request allread exists in queue.
 bool isInQueue(Request reqArr[], int arrLength, Request newReq);

@@ -73,5 +73,5 @@ void handleFloorService(Request reqArr[], int arrLength) {
 	timer(3, reqArr, arrLength, DIRN_STOP);
 	elev_set_door_open_lamp(0);
 
-	removeRequest(reqArr, arrLength); // Remove requests on serviced floor
+	removeRequest(reqArr, arrLength, currentFloor); // Remove requests on serviced floor
 }

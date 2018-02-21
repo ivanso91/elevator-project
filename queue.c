@@ -30,15 +30,13 @@ void defragmentArr(Request reqArr[], int arrLength) {
 	}
 }
 
-void removeRequest(Request reqArr[], int arrLength){
-	int currentFloor = elev_get_floor_sensor_signal();
-
+void removeRequest(Request reqArr[], int arrLength, int floor){
 	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].floor == currentFloor) {
+		if (reqArr[i].floor == floor) {
 			reqArr[i].isReq = 0;
 			reqArr[i].floor = 0;
 			
-			elev_set_button_lamp(reqArr[i].button, currentFloor, 0);
+			elev_set_button_lamp(reqArr[i].button, floor, 0);
 		}
 	}
 	defragmentArr(reqArr, arrLength);
