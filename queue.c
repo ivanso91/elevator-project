@@ -79,9 +79,7 @@ void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_dire
 	int i = 0;
 	int currentFloor = elev_get_floor_sensor_signal();
 	
-	if (newReq.floor == currentFloor && currentDir == DIRN_STOP) {
-		// EDIT THIS: Open doors here, if not allready open
-	} else if (!isInQueue(reqArr, arrLength, newReq)) {
+	if (!isInQueue(reqArr, arrLength, newReq)) {
 		while (reqArr[i].isReq && i < arrLength) {
 			i++;
 		}
