@@ -31,8 +31,9 @@ typedef enum tag_elev_motor_direction {
 /**
   Sets the motor direction of the elevator.
   @param dirn New direction of the elevator.
+  Returns the new direction of the elevator.
 */
-void elev_set_motor_direction(elev_motor_direction_t dirn);
+elev_motor_direction_t elev_set_motor_direction(elev_motor_direction_t dirn);
 
 
 
@@ -70,8 +71,8 @@ void elev_set_stop_lamp(int value);
 
 /**
   Get floor sensor signal.
-  @return -1 if elevator is not on a floor. 0-3 if elevator is on floor. 0 is
-    ground floor, 3 is top floor.
+  @return -1 if elevator is not on a floor. 1-4 if elevator is on floor. 1 is
+    ground floor, 4 is top floor.
 */
 int elev_get_floor_sensor_signal(void);
 
@@ -80,8 +81,9 @@ int elev_get_floor_sensor_signal(void);
 /**
   Set floor indicator lamp for a given floor.
   @param floor Which floor lamp to turn on. Other floor lamps are turned off.
+  Returns current elevator floor.
 */
-void elev_set_floor_indicator(int floor);
+int elev_set_floor_indicator(int floor);
 
 
 

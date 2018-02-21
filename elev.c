@@ -56,7 +56,7 @@ int elev_init(void) {
     return 1;
 }
 
-void elev_set_motor_direction(elev_motor_direction_t dirn) {
+elev_motor_direction_t elev_set_motor_direction(elev_motor_direction_t dirn) {
     if (dirn == 0){
         io_write_analog(MOTOR, 0);
     } else if (dirn > 0) {
@@ -66,6 +66,7 @@ void elev_set_motor_direction(elev_motor_direction_t dirn) {
         io_set_bit(MOTORDIR);
         io_write_analog(MOTOR, 2800);
     }
+    return dirn;
 }
 
 void elev_set_door_open_lamp(int value) {
@@ -92,18 +93,18 @@ void elev_set_stop_lamp(int value) {
 
 int elev_get_floor_sensor_signal(void) {
     if (io_read_bit(SENSOR_FLOOR1))
-        return 0;
-    else if (io_read_bit(SENSOR_FLOOR2))
         return 1;
-    else if (io_read_bit(SENSOR_FLOOR3))
+    else if (io_read_bit(SENSOR_FLOOR2))
         return 2;
-    else if (io_read_bit(SENSOR_FLOOR4))
+    else if (io_read_bit(SENSOR_FLOOR3))
         return 3;
+    else if (io_read_bit(SENSOR_FLOOR4))
+        return 4;
     else
         return -1;
 }
 
-void elev_set_floor_indicator(int floor) {
+int elev_set_floor_indicator(int floor) {
     assert(floor >= 0);
     assert(floor < N_FLOORS);
 
@@ -117,6 +118,8 @@ void elev_set_floor_indicator(int floor) {
         io_set_bit(LIGHT_FLOOR_IND2);
     else
         io_clear_bit(LIGHT_FLOOR_IND2);
+
+    return floor;
 }
 
 int elev_get_button_signal(elev_button_type_t button, int floor) {
@@ -133,6 +136,7 @@ int elev_get_button_signal(elev_button_type_t button, int floor) {
 }
 
 void elev_set_button_lamp(elev_button_type_t button, int floor, int value) {
+    floor = floor - 1;
     assert(floor >= 0);
     assert(floor < N_FLOORS);
     assert(!(button == BUTTON_CALL_UP && floor == N_FLOORS - 1));

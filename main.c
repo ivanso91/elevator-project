@@ -20,12 +20,10 @@ int main() {
 	// Get current floor and set initial direction
 	currentFloor = elev_get_floor_sensor_signal();
 	if (currentFloor == -1) {
-		elev_set_motor_direction(DIRN_DOWN);
-		currentDir = DIRN_DOWN;
+		currentDir = elev_set_motor_direction(DIRN_DOWN);
 	} else {
-		currentDir = DIRN_STOP;
-        elev_set_floor_indicator(currentFloor);
-		lastFloor = currentFloor;
+        currentDir = elev_set_motor_direction(DIRN_STOP);
+        lastFloor = elev_set_floor_indicator(currentFloor);
 	}
     
     while (1) {
@@ -36,19 +34,17 @@ int main() {
         if (currentFloor != -1) {
 			// Set floor light indicator if new floor
 			if (currentFloor != lastFloor) {
-				elev_set_floor_indicator(currentFloor);
-				lastFloor = currentFloor;
+				lastFloor = elev_set_floor_indicator(currentFloor);
 			}
 			// Service if request in current floor
-			if (isRequestHere(reqArr, maxReq, currentFloor, currentDir)) {
-				handleFloorService(reqArr, maxReq, currentFloor);
+			if (isRequestHere(reqArr, maxReq, currentDir)) {
+				handleFloorService(reqArr, maxReq);
 			}
 			// Determine new direction for elevator - allways if elevator is in floor
 			newDir = determineDirection(reqArr, maxReq, currentDir);
 			// Set elevator direction if changed
 			if (newDir != currentDir) {
-				elev_set_motor_direction(newDir);
-				currentDir = newDir;
+				currentDir = elev_set_motor_direction(newDir);
                 // Avoid stopping again at the same floor after elevator start moving
 				timer(1, reqArr, maxReq, currentDir); 
 			}
@@ -58,7 +54,7 @@ int main() {
 		newReq = handleButtonSignal();
 		// If button pushed, add request to queue
 		if (newReq.isReq){
-			addRequest(reqArr, maxReq, currentFloor, newReq, currentDir);
+			addRequest(reqArr, maxReq, newReq, currentDir);
 		}
 
         // Stop elevator and exit program if the stop button is pressed

@@ -36,9 +36,9 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_
 	int currentFloor = elev_get_floor_sensor_signal();
 
 	if (currentDir != DIRN_STOP) {
-		if(requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+		if(requestInDir(reqArr, arrLength, currentDir)) {
 			newDir = currentDir;
-		} else if (requestInDir(reqArr, arrLength, currentFloor, -currentDir)) {
+		} else if (requestInDir(reqArr, arrLength, -currentDir)) {
 			newDir = -currentDir;
 		} else newDir = DIRN_STOP;
 	} else if (reqArr[0].isReq){
@@ -51,7 +51,6 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_
 void timer(int endTime, Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
 	time_t t_0 = time(NULL), diff;
 	Request newReq;
-	int currentFloor = elev_get_floor_sensor_signal();
     
     do {
 		// Get button push signal
@@ -59,18 +58,20 @@ void timer(int endTime, Request reqArr[], int arrLength, elev_motor_direction_t 
 		// If button pushed, add request to queue
 		
 		if (newReq.isReq){
-			addRequest(reqArr, arrLength, currentFloor, newReq, currentDir);
+			addRequest(reqArr, arrLength, newReq, currentDir);
 		}
         diff = (time(NULL) - t_0);
         
     } while (diff < endTime);
 }
 
-void handleFloorService(Request reqArr[], int arrLength, int currentFloor) {
+void handleFloorService(Request reqArr[], int arrLength) {
+	int currentFloor = elev_get_floor_sensor_signal();
+
 	elev_set_motor_direction(DIRN_STOP);
 	elev_set_door_open_lamp(1);
 	timer(3, reqArr, arrLength, DIRN_STOP);
 	elev_set_door_open_lamp(0);
 
-	removeRequest(reqArr, arrLength, currentFloor); // Remove requests on serviced floor
+	removeRequest(reqArr, arrLength); // Remove requests on serviced floor
 }

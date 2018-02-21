@@ -30,7 +30,9 @@ void defragmentArr(Request reqArr[], int arrLength) {
 	}
 }
 
-void removeRequest(Request reqArr[], int arrLength, int currentFloor){
+void removeRequest(Request reqArr[], int arrLength){
+	int currentFloor = elev_get_floor_sensor_signal();
+
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == currentFloor) {
 			reqArr[i].isReq = 0;
@@ -52,11 +54,12 @@ bool isInQueue(Request reqArr[], int arrLength, Request newReq){
 	return exists;
 }
 
-void addRequest(Request reqArr[], int arrLength, int currentFloor, Request newReq, elev_motor_direction_t currentDir) {
+void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_direction_t currentDir) {
 	int i = 0;
+	int currentFloor = elev_get_floor_sensor_signal();
 	
 	if (newReq.floor == currentFloor && currentDir == DIRN_STOP) {
-		//Do nothing, elevator door is already open at floor destination
+		// EDIT THIS: Open doors here, if not allready open
 	} else if (!isInQueue(reqArr, arrLength, newReq)) {
 		while (reqArr[i].isReq) {
 			i++;
@@ -65,13 +68,14 @@ void addRequest(Request reqArr[], int arrLength, int currentFloor, Request newRe
 		reqArr[i].button = newReq.button;
 		reqArr[i].floor = newReq.floor;
 		
-		elev_set_button_lamp(newReq.button, newReq.floor-1, 1);
+		elev_set_button_lamp(newReq.button, newReq.floor, 1);
 	}
 }
 
-bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+bool isRequestHere(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
 	elev_button_type_t reqButtonType;
+	int currentFloor = elev_get_floor_sensor_signal();
 
 	for (int i = 0; i < arrLength; i++) {
 		if (reqArr[i].floor == currentFloor) {
@@ -79,14 +83,14 @@ bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor
 				case BUTTON_CALL_DOWN :
 					if (currentDir == DIRN_DOWN || currentDir == DIRN_STOP) {
 						isRequested = true; 
-					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentDir)) {
 						isRequested = true;
 					}
 					break;
 				case BUTTON_CALL_UP :
 					if (currentDir == DIRN_UP || currentDir == DIRN_STOP) {
 						isRequested = true;
-					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentDir)) {
 						isRequested = true;
 					}
 					break;
@@ -98,9 +102,10 @@ bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor
 	return isRequested;
 }
 
-bool requestInDir(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
+bool requestInDir(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
 	bool isReqInDir = false;
 	int helpVar;
+	int currentFloor = elev_get_floor_sensor_signal();
 	
 	if (currentFloor != -1) {
 		for (int i = 0; i < arrLength; i++) {
