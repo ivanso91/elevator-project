@@ -41,7 +41,9 @@ elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, int c
 			newDir = -currentDir;
 		} else newDir = DIRN_STOP;
 	} else if (reqArr[0].isReq){
-		newDir = signExtd(reqArr[0].floor - currentFloor);
+		if (currentFloor != -1) {
+			newDir = signExtd(reqArr[0].floor - currentFloor);
+		}
 	} else newDir = DIRN_STOP;
 
 	printDirection(newDir);
