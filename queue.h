@@ -33,9 +33,9 @@ void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_dire
 // Return true if any requests for current floor.
 // Takes into account if the floor has request in opposite direction, BUT no queued requests in current 
 // direction, meaning elevator WILL switch direction after this floor.
-bool isRequestHere(Request reqArr[], int arrLength, elev_motor_direction_t currentDir);
+bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir);
 
 //Returns true if there are any requests on subsequent floors in elevator's current direction.
-bool requestInDir(Request reqArr[], int arrLenght, elev_motor_direction_t currentDir);
+bool requestInDir(Request reqArr[], int arrLenght, int currentFloor, elev_motor_direction_t currentDir);
 
 void printRequests(Request reqArr[], int arrlength);

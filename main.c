@@ -44,11 +44,11 @@ int main() {
 				lastFloor = elev_set_floor_indicator(currentFloor);
 			}
 			// Service if request in current floor
-			if (isRequestHere(reqArr, maxReq, currentDir)) {
+			if (isRequestHere(reqArr, maxReq, currentFloor, currentDir)) {
 				handleFloorService(reqArr, maxReq);
 			}
 			// Determine new direction for elevator - allways if elevator is in floor
-			newDir = determineDirection(reqArr, maxReq, currentDir);
+			newDir = determineDirection(reqArr, maxReq, currentFloor, currentDir);
 			// Set elevator direction if changed
 			if (newDir != currentDir) {
 				currentDir = elev_set_motor_direction(newDir);

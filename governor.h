@@ -11,7 +11,7 @@
 // If requests in current direction: newDir = currentDir
 // If no requests in current direction, but requests in opposite: newDir = -currentDir
 // If no requests: newDir = DIRN_STOP
-elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_motor_direction_t currentDir);
+elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir);
 
 // Timer that pauses program for given seconds
 // DOES STORE customer requests during pause

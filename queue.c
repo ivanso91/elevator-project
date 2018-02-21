@@ -95,25 +95,24 @@ void addRequest(Request reqArr[], int arrLength, Request newReq, elev_motor_dire
 }
 
 // Something wrong here... Thinks allways request in 1st floor(?)
-bool isRequestHere(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
+bool isRequestHere(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isRequested = false;
 	//elev_button_type_t reqButtonType;
-	int currentFloor = elev_get_floor_sensor_signal();
 
 	for (int i = 0; i < arrLength; i++) {
-		if (reqArr[i].floor == currentFloor) {
+		if (reqArr[i].isReq && (reqArr[i].floor == currentFloor)) {
 			switch (reqArr[i].button) {
 				case BUTTON_CALL_DOWN :
 					if (currentDir == DIRN_DOWN || currentDir == DIRN_STOP) {
 						isRequested = true; 
-					} else if (!requestInDir(reqArr, arrLength, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
 				case BUTTON_CALL_UP :
 					if (currentDir == DIRN_UP || currentDir == DIRN_STOP) {
 						isRequested = true;
-					} else if (!requestInDir(reqArr, arrLength, currentDir)) {
+					} else if (!requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
 						isRequested = true;
 					}
 					break;
@@ -126,9 +125,8 @@ bool isRequestHere(Request reqArr[], int arrLength, elev_motor_direction_t curre
 }
 
 // Something wrong here (thinks there are requests in floor below)
-bool requestInDir(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
+bool requestInDir(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	bool isReqInDir = false;
-	int currentFloor = elev_get_floor_sensor_signal();
 	int fdiff;
 	
 	if (currentFloor != -1) {

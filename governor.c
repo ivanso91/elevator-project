@@ -31,14 +31,13 @@ int signExtd(int x) {
 	}
 }
 
-elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, elev_motor_direction_t currentDir) {
+elev_motor_direction_t determineDirection(Request reqArr[], int arrLength, int currentFloor, elev_motor_direction_t currentDir) {
 	elev_motor_direction_t newDir;
-	int currentFloor = elev_get_floor_sensor_signal();
 
 	if (currentDir != DIRN_STOP) {
-		if(requestInDir(reqArr, arrLength, currentDir)) {
+		if(requestInDir(reqArr, arrLength, currentFloor, currentDir)) {
 			newDir = currentDir;
-		} else if (requestInDir(reqArr, arrLength, -currentDir)) {
+		} else if (requestInDir(reqArr, arrLength, currentFloor, -currentDir)) {
 			newDir = -currentDir;
 		} else newDir = DIRN_STOP;
 	} else if (reqArr[0].isReq){
