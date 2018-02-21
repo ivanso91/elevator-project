@@ -22,3 +22,5 @@ void handleFloorService(Request reqArr[], int arrLength);
 
 // Stops elevator on stop button signal
 void stopElevator(Request reqArr[], int arrLength);
+
+void printDirection(elev_motor_direction_t currentDir);

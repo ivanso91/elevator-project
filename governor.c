@@ -90,3 +90,19 @@ void stopElevator(Request reqArr[], int arrLength) {
 	timer(3, reqArr, arrLength, DIRN_STOP);
 	elev_set_door_open_lamp(0);
 }
+
+void printDirection(elev_motor_direction_t currentDir) {
+	switch (currentDir) {
+		case DIRN_STOP :
+			printf("Direction: STOP\n");
+			break;
+		case DIRN_UP :
+			printf("Direction: UP\n");
+			break;
+		case DIRN_DOWN :
+			printf("Direction: DOWN\n");
+			break;
+		default :
+			printf("Error\n");
+	}
+}
