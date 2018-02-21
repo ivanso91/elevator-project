@@ -52,11 +52,9 @@ int main() {
 			// Determine new direction for elevator - allways if elevator is in floor
 			newDir = determineDirection(reqArr, maxReq, currentFloor, currentDir);
 			// Set elevator direction if changed
-			//if (newDir != currentDir) {
-				currentDir = elev_set_motor_direction(newDir);
-                // Avoid stopping again at the same floor after elevator start moving
-				// timer(1, reqArr, maxReq, currentDir); 
-			//}
+			currentDir = elev_set_motor_direction(newDir);
+            // Avoid stopping again at the same floor after elevator start moving (?)
+			// timer(1, reqArr, maxReq, currentDir); 
 		}
 
         
@@ -72,6 +70,7 @@ int main() {
             stopElevator(reqArr, maxReq);
             newDir = determineDirection(reqArr, maxReq, currentFloor, currentDir);
             currentDir = elev_set_motor_direction(newDir);
+            printDirection(currentDir);
         }
 
         // Stop elevator and quit program if obstruction activated
